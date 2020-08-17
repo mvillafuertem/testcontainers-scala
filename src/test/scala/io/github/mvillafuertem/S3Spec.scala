@@ -1,21 +1,20 @@
 package io.github.mvillafuertem
 
 import java.net.URI
-import java.util.concurrent.CompletionException
 
 import org.testcontainers.containers
 import org.testcontainers.containers.wait.strategy.Wait
 import software.amazon.awssdk.http.HttpStatusCode
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.s3.S3AsyncClient
-import software.amazon.awssdk.services.s3.model.{CreateBucketRequest, CreateBucketResponse, NoSuchKeyException}
+import software.amazon.awssdk.services.s3.model.{CreateBucketRequest, CreateBucketResponse}
 
 import scala.compat.java8.FutureConverters.CompletionStageOps
 import scala.concurrent.Future
 
 final class S3Spec extends LocalStackConfiguration {
 
-  behavior of s"${this.getClass.getSimpleName}"
+  behavior of "S3 Spec"
 
   it should "Create Bucket Request" in {
 
@@ -33,15 +32,9 @@ final class S3Spec extends LocalStackConfiguration {
       .build()
 
     // w h e n
-    val createBucketResponse: Future[CreateBucketResponse] = for {
-      headObjectResponse <- s3AsyncClientDefault
-        .createBucket(createBucketRequest)
-        .toScala
-        .recover {
-          case e: CompletionException if e.getCause.isInstanceOf[NoSuchKeyException] => throw e
-          case e => throw e
-        }
-    } yield headObjectResponse
+    val createBucketResponse: Future[CreateBucketResponse] = s3AsyncClientDefault
+      .createBucket(createBucketRequest)
+      .toScala
 
     // t h e n
     createBucketResponse.map { actual =>
