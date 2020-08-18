@@ -24,6 +24,7 @@
     </appender>
 
     <logger name="ch.qos.logback" level="WARN"/>
+    <logger name="org.testcontainers" level="DEBUG"/>
 
     <root level="INFO">
         <appender-ref ref="ASYNCFILE"/>
